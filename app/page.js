@@ -7,6 +7,7 @@ const calendlyUrl = "https://calendly.com/aamirr-1232/30min";
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [formMessage, setFormMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [siteSettings, setSiteSettings] = useState({
@@ -146,6 +147,23 @@ export default function HomePage() {
 
     loadSettings();
 
+    const loadAdminSession = async () => {
+      try {
+        const response = await fetch("/api/admin/session");
+        if (!response.ok) {
+          return;
+        }
+        const payload = await response.json();
+        if (mounted && payload?.isAdmin) {
+          setIsAdmin(true);
+        }
+      } catch {
+        // Ignore session errors on public page.
+      }
+    };
+
+    loadAdminSession();
+
     return () => {
       mounted = false;
     };
@@ -222,6 +240,16 @@ export default function HomePage() {
                 {item.label}
               </a>
             ))}
+            {isAdmin && (
+              <span className="site-nav-admin" role="group" aria-label="Admin only links">
+                <a href="/admin" className="site-nav-admin-link" onClick={closeMenu}>
+                  Admin
+                </a>
+                <a href="/admin#users" className="site-nav-admin-link" onClick={closeMenu}>
+                  Add user
+                </a>
+              </span>
+            )}
           </nav>
         </div>
       </header>

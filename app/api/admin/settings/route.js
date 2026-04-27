@@ -4,6 +4,14 @@ import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "@/lib/adminAuth";
 import { getSiteSettings, updateSiteSettings } from "@/lib/settingsStore";
 
 export const runtime = "nodejs";
+const ALLOWED_TEAM_ROLES = new Set([
+  "admin",
+  "content_manager",
+  "editor",
+  "analyst",
+  "support",
+  "viewer"
+]);
 
 function validateSettingsPayload(payload) {
   if (!payload || typeof payload !== "object") {
@@ -42,6 +50,35 @@ function validateSettingsPayload(payload) {
     return "WhatsApp message must be 280 characters or less.";
   }
 
+  if (payload.teamUsers !== undefined) {
+    if (!Array.isArray(payload.teamUsers)) {
+      return "teamUsers must be an array.";
+    }
+    for (const user of payload.teamUsers) {
+      if (!user || typeof user !== "object") {
+        return "Each team user must be an object.";
+      }
+      const email = String(user.email || "").trim();
+      if (!email) {
+        return "Each team user must have an email.";
+      }
+      if (email.length > 254) {
+        return "Team user email is too long.";
+      }
+      const name = String(user.name || "").trim();
+      const role = String(user.role || "").trim();
+      if (name.length > 120) {
+        return "Team user name is too long.";
+      }
+      if (role.length > 80) {
+        return "Team user role is too long.";
+      }
+      if (role && !ALLOWED_TEAM_ROLES.has(role)) {
+        return "Invalid team user role.";
+      }
+    }
+  }
+
   return null;
 }
 
@@ -54,7 +91,8 @@ async function requireAdmin() {
 export async function GET() {
   try {
     const settings = await getSiteSettings();
-    return NextResponse.json({ settings });
+    const { teamUsers: _teamUsers, ...publicSettings } = settings;
+    return NextResponse.json({ settings: publicSettings });
   } catch {
     return NextResponse.json({ error: "Failed to fetch settings." }, { status: 500 });
   }

@@ -1,21 +1,163 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+function Icon({ name }) {
+  const common = { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", "aria-hidden": true };
+
+  if (name === "general") {
+    return (
+      <svg {...common}>
+        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" strokeWidth="1.6" />
+      </svg>
+    );
+  }
+
+  if (name === "navigation") {
+    return (
+      <svg {...common}>
+        <path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (name === "hero") {
+    return (
+      <svg {...common}>
+        <path d="M7 3h10a2 2 0 0 1 2 2v14l-7-3-7 3V5a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
+      </svg>
+    );
+  }
+
+  if (name === "trust") {
+    return (
+      <svg {...common}>
+        <path d="M12 3 20 6v6c0 5-4 8-8 9-4-1-8-4-8-9V6l8-3Z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="m9 12 2 2 4-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  if (name === "services") {
+    return (
+      <svg {...common}>
+        <path d="M8 7h8M8 12h8M8 17h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
+      </svg>
+    );
+  }
+
+  if (name === "industries") {
+    return (
+      <svg {...common}>
+        <path d="M7 7h10v10H7z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M4 4h4M16 4h4M4 20h4M16 20h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (name === "about") {
+    return (
+      <svg {...common}>
+        <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M5 20a7 7 0 0 1 14 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (name === "caseStudies") {
+    return (
+      <svg {...common}>
+        <path d="M7 4h10a2 2 0 0 1 2 2v14H5V6a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M9 9h6M9 13h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (name === "faq") {
+    return (
+      <svg {...common}>
+        <path d="M12 17h.01" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+        <path d="M8.5 9a3.5 3.5 0 0 1 7 0c0 2-2 2.5-2 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M7 20h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (name === "whatsapp") {
+    return (
+      <svg {...common}>
+        <path
+          d="M12 3a8 8 0 0 0-6.9 12L4 21l6.2-1.6A8 8 0 1 0 12 3Z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
+        <path d="M9.2 9.5c.2-.6 1-1 1.6-.9 1.1.2 2.1 1.2 2.3 2.3.1.6-.3 1.4-.9 1.6-.4.1-.8 0-1.1-.2l-.6-.3c-.2-.1-.4 0-.5.1l-.3.4c-.5-.3-.9-.7-1.2-1.2l.4-.3c.1-.1.2-.3.1-.5l-.3-.6c-.2-.3-.3-.7-.2-1.1Z"
+          fill="currentColor"
+          opacity="0.18"
+        />
+      </svg>
+    );
+  }
+
+  if (name === "contact") {
+    return (
+      <svg {...common}>
+        <path d="M4 6h16v12H4z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="m4 8 8 6 8-6" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  if (name === "footer") {
+    return (
+      <svg {...common}>
+        <path d="M6 18h12M8 18V8h8v10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M10 12h4M10 15h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (name === "users") {
+    return (
+      <svg {...common}>
+        <path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M18 8h.01" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M6 6h12v12H6z" stroke="currentColor" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
 const sections = [
-  { id: "general", label: "General" },
-  { id: "navigation", label: "Navigation" },
-  { id: "hero", label: "Hero" },
-  { id: "trust", label: "Trust Bar" },
-  { id: "services", label: "Services" },
-  { id: "industries", label: "Industries" },
-  { id: "about", label: "About & Process" },
-  { id: "caseStudies", label: "Case Studies" },
-  { id: "faq", label: "FAQ" },
-  { id: "whatsapp", label: "WhatsApp" },
-  { id: "contact", label: "Contact Section" },
-  { id: "footer", label: "Footer" }
+  { id: "general", label: "General", icon: "general", group: "site" },
+  { id: "navigation", label: "Navigation", icon: "navigation", group: "site" },
+  { id: "hero", label: "Hero", icon: "hero", group: "content" },
+  { id: "trust", label: "Trust Bar", icon: "trust", group: "content" },
+  { id: "services", label: "Services", icon: "services", group: "content" },
+  { id: "industries", label: "Industries", icon: "industries", group: "content" },
+  { id: "about", label: "About & Process", icon: "about", group: "content" },
+  { id: "caseStudies", label: "Case Studies", icon: "caseStudies", group: "content" },
+  { id: "faq", label: "FAQ", icon: "faq", group: "content" },
+  { id: "whatsapp", label: "WhatsApp", icon: "whatsapp", group: "messaging" },
+  { id: "contact", label: "Contact", icon: "contact", group: "messaging" },
+  { id: "footer", label: "Footer", icon: "footer", group: "messaging" },
+  { id: "users", label: "Team Users", icon: "users", group: "administration" }
+];
+
+const navGroups = [
+  { id: "site", label: "Site" },
+  { id: "content", label: "Content" },
+  { id: "messaging", label: "Messaging" },
+  { id: "administration", label: "Administration" }
 ];
 
 function StringListEditor({ label, items, onChange, placeholder }) {
@@ -55,7 +197,9 @@ function ObjectListEditor({ label, items, onChange, fields, addLabel }) {
   };
 
   const addItem = () => {
-    const newItem = Object.fromEntries(fields.map((field) => [field.key, ""]));
+    const newItem = Object.fromEntries(
+      fields.map((field) => [field.key, field.defaultValue ?? ""])
+    );
     onChange([...items, newItem]);
   };
 
@@ -67,7 +211,7 @@ function ObjectListEditor({ label, items, onChange, fields, addLabel }) {
       {items.map((item, index) => (
         <div className="admin-object-card" key={`${label}-${index}`}>
           {fields.map((field) => (
-            <div key={`${field.key}-${index}`}>
+            <div className="admin-object-field" key={`${field.key}-${index}`}>
               <label>{field.label}</label>
               {field.type === "textarea" ? (
                 <textarea
@@ -75,6 +219,17 @@ function ObjectListEditor({ label, items, onChange, fields, addLabel }) {
                   value={item[field.key]}
                   onChange={(event) => updateItem(index, field.key, event.target.value)}
                 />
+              ) : field.type === "select" ? (
+                <select
+                  value={item[field.key]}
+                  onChange={(event) => updateItem(index, field.key, event.target.value)}
+                >
+                  {(field.options || []).map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               ) : (
                 <input
                   type="text"
@@ -98,22 +253,42 @@ function ObjectListEditor({ label, items, onChange, fields, addLabel }) {
 
 export default function AdminSettingsForm({ initialSettings }) {
   const router = useRouter();
-  const [settings, setSettings] = useState(initialSettings);
+  const [settings, setSettings] = useState(() => ({
+    ...initialSettings,
+    teamUsers: Array.isArray(initialSettings.teamUsers) ? initialSettings.teamUsers : []
+  }));
   const [activeSection, setActiveSection] = useState("general");
   const [status, setStatus] = useState("");
   const [statusType, setStatusType] = useState("");
+  const [statusSection, setStatusSection] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [savingSection, setSavingSection] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [openGroups, setOpenGroups] = useState(() =>
+    Object.fromEntries(navGroups.map((group) => [group.id, true]))
+  );
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const hash = window.location.hash.replace(/^#/, "");
+    if (hash === "users") {
+      setActiveSection("users");
+      setOpenGroups((prev) => ({ ...prev, administration: true }));
+    }
+  }, []);
 
   const updateField = (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSave = async (event) => {
-    event.preventDefault();
+  const persistSettings = async (sectionId) => {
     setStatus("");
     setStatusType("");
+    setStatusSection("");
     setIsSaving(true);
+    setSavingSection(sectionId);
 
     try {
       const response = await fetch("/api/admin/settings", {
@@ -126,19 +301,38 @@ export default function AdminSettingsForm({ initialSettings }) {
       if (!response.ok) {
         setStatusType("error");
         setStatus(payload?.error || "Unable to save settings.");
+        setStatusSection(sectionId);
         return;
       }
 
       setSettings(payload.settings);
       setStatusType("success");
-      setStatus("Settings saved successfully.");
+      setStatus("Saved successfully.");
+      setStatusSection(sectionId);
       router.refresh();
     } catch {
       setStatusType("error");
       setStatus("Save failed. Please try again.");
+      setStatusSection(sectionId);
     } finally {
       setIsSaving(false);
+      setSavingSection("");
     }
+  };
+
+  const handleSaveSection = async (sectionId) => {
+    await persistSettings(sectionId);
+  };
+
+  const toggleGroup = (groupId) => {
+    setOpenGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
+  };
+
+  const handleSelectSection = (sectionId) => {
+    setActiveSection(sectionId);
+    setStatus("");
+    setStatusType("");
+    setStatusSection("");
   };
 
   const handleLogout = async () => {
@@ -157,25 +351,64 @@ export default function AdminSettingsForm({ initialSettings }) {
       <section className="admin-console">
         <aside className="admin-nav" aria-label="Admin menu">
           <h1>Admin Center</h1>
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              type="button"
-              className={`admin-nav-item ${activeSection === section.id ? "active" : ""}`}
-              onClick={() => setActiveSection(section.id)}
-            >
-              {section.label}
-            </button>
-          ))}
+          {navGroups.map((group) => {
+            const groupSections = sections.filter((section) => section.group === group.id);
+            const isOpen = openGroups[group.id];
+
+            return (
+              <div className="admin-nav-group" key={group.id}>
+                <button
+                  type="button"
+                  className="admin-nav-group-toggle"
+                  onClick={() => toggleGroup(group.id)}
+                  aria-expanded={isOpen}
+                >
+                  <span>{group.label}</span>
+                  <span className="admin-nav-chevron" aria-hidden="true">
+                    {isOpen ? "▾" : "▸"}
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="admin-nav-group-items">
+                    {groupSections.map((section) => (
+                      <button
+                        key={section.id}
+                        type="button"
+                        className={`admin-nav-item ${activeSection === section.id ? "active" : ""}`}
+                        onClick={() => handleSelectSection(section.id)}
+                      >
+                        <span className="admin-nav-item-icon" aria-hidden="true">
+                          <Icon name={section.icon} />
+                        </span>
+                        <span className="admin-nav-item-label">{section.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
           <button type="button" className="admin-nav-item admin-logout-btn" onClick={handleLogout} disabled={isLoggingOut}>
             {isLoggingOut ? "Signing out..." : "Logout"}
           </button>
         </aside>
 
-        <form className="admin-main" onSubmit={handleSave} noValidate>
+        <div className="admin-main">
           <div className="admin-main-header">
-            <h2>{sections.find((section) => section.id === activeSection)?.label || "Settings"}</h2>
-            <p>Manage website content and structure from one place.</p>
+            <div>
+              <h2>{sections.find((section) => section.id === activeSection)?.label || "Settings"}</h2>
+              <p>Manage website content and structure from one place.</p>
+            </div>
+            <div className="admin-main-header-actions">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => handleSaveSection(activeSection)}
+                disabled={isSaving}
+              >
+                {isSaving && savingSection === activeSection ? "Saving..." : "Save"}
+              </button>
+            </div>
           </div>
 
           <div className="admin-section-panel">
@@ -342,16 +575,45 @@ export default function AdminSettingsForm({ initialSettings }) {
                 />
               </>
             )}
+
+            {activeSection === "users" && (
+              <>
+                <p className="admin-help-text">
+                  Add team or portal contacts here. This list is stored with site settings and is only editable while
+                  signed in as admin. Only users with role <strong>Admin</strong> should be treated as full-control users.
+                </p>
+                <ObjectListEditor
+                  label="Users"
+                  items={settings.teamUsers}
+                  onChange={(items) => updateField("teamUsers", items)}
+                  fields={[
+                    { key: "email", label: "Email" },
+                    { key: "name", label: "Name" },
+                    {
+                      key: "role",
+                      label: "Role",
+                      type: "select",
+                      defaultValue: "viewer",
+                      options: [
+                        { value: "admin", label: "Admin (Full Control)" },
+                        { value: "content_manager", label: "Content Manager" },
+                        { value: "editor", label: "Editor" },
+                        { value: "analyst", label: "Analyst" },
+                        { value: "support", label: "Support" },
+                        { value: "viewer", label: "Viewer (Read-only)" }
+                      ]
+                    }
+                  ]}
+                  addLabel="Add User"
+                />
+              </>
+            )}
           </div>
 
-          <div className="admin-actions">
-            <button type="submit" className="btn btn-primary" disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-
-          <p className={`form-message ${statusType}`} aria-live="polite">{status}</p>
-        </form>
+          <p className={`form-message ${statusType}`} aria-live="polite">
+            {status && (!statusSection || statusSection === activeSection) ? status : ""}
+          </p>
+        </div>
       </section>
     </div>
   );

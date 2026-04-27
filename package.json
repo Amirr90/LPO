@@ -6,11 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "hash:admin-password": "node scripts/generate-admin-password-hash.mjs"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.2.4",
     "next": "latest",
+    "postcss": "^8.5.12",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1",
+    "tailwindcss": "^4.2.4"
   }
 }

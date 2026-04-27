@@ -1,23 +1,155 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Script from "next/script";
 
-const navItems = [
-  { href: "#home", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#industries", label: "Industries" },
-  { href: "#about", label: "About Us" },
-  { href: "#case-studies", label: "Case Studies" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#contact", label: "Contact" }
-];
+const calendlyUrl = "https://calendly.com/aamirr-1232/30min";
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [formMessage, setFormMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const [siteSettings, setSiteSettings] = useState({
+    brandName: "LPO Legal Solutions",
+    navItems: [
+      { href: "#home", label: "Home" },
+      { href: "#services", label: "Services" },
+      { href: "#industries", label: "Industries" },
+      { href: "#about", label: "About Us" },
+      { href: "#case-studies", label: "Case Studies" },
+      { href: "#faq", label: "FAQ" },
+      { href: "#contact", label: "Contact" }
+    ],
+    heroEyebrow: "Trusted LPO Partner",
+    heroHeading: "Scale legal operations with secure, high-quality outsourcing.",
+    heroSubheading:
+      "We help law firms and legal departments reduce turnaround time, improve delivery quality, and control costs with dedicated legal support teams.",
+    heroSupportText: "Free consultation, no obligation, and secure communication tailored for law firms.",
+    heroCtaPrimary: "Book Free Consultation",
+    heroCtaSecondary: "Get a Quote",
+    heroQuickPoints: ["Free 30-min consultation", "No obligation"],
+    heroTrustPoints: [
+      "Trusted by legal teams in US & UK",
+      "Confidential & secure communication",
+      "Get a response within 24 hours"
+    ],
+    heroCardTitle: "Why teams choose us",
+    heroCardItems: [
+      "24-48 hour delivery options",
+      "Strict confidentiality standards",
+      "Skilled legal and compliance professionals",
+      "Transparent pricing and predictable outcomes"
+    ],
+    trustItems: [
+      "Confidential workflows",
+      "Domain-trained legal teams",
+      "US-focused legal standards",
+      "Dedicated delivery manager"
+    ],
+    servicesTitle: "Expanded LPO Services",
+    servicesIntro:
+      "End-to-end legal operations support designed for speed, compliance, and measurable outcomes.",
+    services: [
+      {
+        title: "Contract Drafting and Review",
+        description: "Draft, review, and redline agreements to reduce negotiation cycles and legal risk."
+      },
+      {
+        title: "Legal Research and Memo Support",
+        description: "Jurisdiction-specific research with concise memo outputs for faster legal decisions."
+      },
+      {
+        title: "eDiscovery and Document Review",
+        description: "Scalable review support for litigation, diligence, and internal investigations."
+      }
+    ],
+    servicesCtaPrimary: "Request Service Proposal",
+    servicesCtaSecondary: "Ask on WhatsApp",
+    industriesTitle: "Industries We Support",
+    industries: ["Banking & Finance", "Healthcare", "Technology", "Insurance", "Real Estate", "Manufacturing"],
+    aboutTitle: "About Us",
+    aboutDescription:
+      "LPO Legal Solutions is built around process excellence and legal rigor. We combine experienced professionals, quality controls, and secure delivery practices to support your legal function as an extension of your in-house team.",
+    processTitle: "Our Delivery Process",
+    processSteps: [
+      "Scope and intake alignment",
+      "Team assignment and kickoff",
+      "Quality checkpoints and review",
+      "Delivery, feedback, and continuous optimization"
+    ],
+    caseStudiesTitle: "Case Studies",
+    caseStudies: [
+      {
+        title: "Contract Turnaround Reduced by 40%",
+        description:
+          "A midsize law firm improved negotiation cycles by standardizing review workflows with our dedicated contracts team."
+      },
+      {
+        title: "Compliance Backlog Cleared in 6 Weeks",
+        description:
+          "A healthcare client resolved delayed policy audits through structured review, reporting, and escalations."
+      }
+    ],
+    faqTitle: "Frequently Asked Questions",
+    faqs: [
+      {
+        question: "How do you ensure confidentiality?",
+        answer: "We use secure systems, role-based access, and strict handling protocols."
+      },
+      {
+        question: "Can you support high-volume projects?",
+        answer: "Yes, we scale teams based on timelines, complexity, and quality targets."
+      },
+      {
+        question: "Do you provide dedicated teams?",
+        answer: "Yes, dedicated teams are available for ongoing legal operations support."
+      }
+    ],
+    whatsappNumber: "0000000000",
+    whatsappMessage: "Hello, I am interested in LPO services. Please share details and pricing.",
+    contactWhatsappLabel: "Chat on WhatsApp",
+    contactHeading: "Ready to streamline legal delivery?",
+    contactDescription:
+      "Request a proposal and we will get back to you within one business day. For urgent requirements, use WhatsApp for faster response.",
+    contactFormButtonText: "Request Proposal",
+    footerLinks: [
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+      { label: "Contact Info", href: "#contact" },
+      { label: "LinkedIn", href: "#" }
+    ],
+    floatingWhatsappLabel: "WhatsApp",
+    footerCopyright: "2026 LPO Legal Solutions. All rights reserved."
+  });
+  const whatsappUrl = `https://wa.me/${siteSettings.whatsappNumber}?text=${encodeURIComponent(siteSettings.whatsappMessage)}`;
 
   const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadSettings = async () => {
+      try {
+        const response = await fetch("/api/admin/settings");
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = await response.json();
+        if (mounted && payload?.settings) {
+          setSiteSettings(payload.settings);
+        }
+      } catch {
+        // Keep default hero text if settings API is unavailable.
+      }
+    };
+
+    loadSettings();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -45,12 +177,33 @@ export default function HomePage() {
     event.currentTarget.reset();
   };
 
+  const handleBookConsultation = (event) => {
+    event.preventDefault();
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      if (window.Calendly?.initPopupWidget) {
+        window.Calendly.initPopupWidget({ url: calendlyUrl });
+        return;
+      }
+    } catch {
+      // Fallback to direct redirect when popup cannot initialize.
+    }
+
+    window.location.href = calendlyUrl;
+  };
+
   return (
     <>
+      <Script src="https://assets.calendly.com/assets/external/widget.js" strategy="afterInteractive" />
+      <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
       <header className="site-header">
         <div className="container nav-wrap">
           <a href="#home" className="brand">
-            LPO Legal Solutions
+            {siteSettings.brandName}
           </a>
           <button
             className="menu-toggle"
@@ -64,7 +217,7 @@ export default function HomePage() {
             <span></span>
           </button>
           <nav className={`site-nav ${menuOpen ? "open" : ""}`} aria-label="Main navigation">
-            {navItems.map((item) => (
+            {siteSettings.navItems.map((item) => (
               <a key={item.href} href={item.href} onClick={closeMenu}>
                 {item.label}
               </a>
@@ -77,28 +230,56 @@ export default function HomePage() {
         <section id="home" className="hero">
           <div className="container hero-grid">
             <div>
-              <p className="eyebrow">Trusted LPO Partner</p>
-              <h1>Scale legal operations with secure, high-quality outsourcing.</h1>
+              <p className="eyebrow">{siteSettings.heroEyebrow}</p>
+              <h1>{siteSettings.heroHeading}</h1>
               <p className="lead">
-                We help law firms and legal departments reduce turnaround time, improve delivery
-                quality, and control costs with dedicated legal support teams.
+                {siteSettings.heroSubheading}
               </p>
-              <div className="hero-cta">
-                <a href="#contact" className="btn btn-primary">
-                  Book Consultation
+              <p className="hero-subtext">
+                {siteSettings.heroSupportText}
+              </p>
+              <div className="hero-cta items-stretch md:items-center">
+                <a
+                  href={calendlyUrl}
+                  className="btn btn-primary shadow-lg shadow-slate-900/20"
+                  onClick={handleBookConsultation}
+                >
+                  {siteSettings.heroCtaPrimary}
                 </a>
-                <a href="#services" className="btn btn-secondary">
-                  Explore Services
+                <a href="#contact" className="btn btn-secondary bg-white/95 text-slate-900">
+                  {siteSettings.heroCtaSecondary}
                 </a>
+                <a
+                  href={whatsappUrl}
+                  className="inline-flex items-center justify-center rounded-lg border border-emerald-300/70 bg-emerald-500/15 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Start WhatsApp enquiry"
+                  title="Quick support only - for detailed enquiries, book a consultation"
+                >
+                  WhatsApp Enquiry
+                </a>
+              </div>
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-200">
+                {siteSettings.heroQuickPoints.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-emerald-100/95">
+                For quick queries only.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-slate-200">
+                {siteSettings.heroTrustPoints.map((point) => (
+                  <p key={point}>{point}</p>
+                ))}
               </div>
             </div>
             <aside className="hero-card">
-              <h2>Why teams choose us</h2>
+              <h2>{siteSettings.heroCardTitle}</h2>
               <ul>
-                <li>24-48 hour delivery options</li>
-                <li>Strict confidentiality standards</li>
-                <li>Skilled legal and compliance professionals</li>
-                <li>Transparent pricing and predictable outcomes</li>
+                {siteSettings.heroCardItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
             </aside>
           </div>
@@ -106,54 +287,45 @@ export default function HomePage() {
 
         <section className="trust-bar">
           <div className="container trust-items">
-            <p>Confidential workflows</p>
-            <p>Domain-trained legal teams</p>
-            <p>US-focused legal standards</p>
-            <p>Dedicated delivery manager</p>
+            {siteSettings.trustItems.map((item) => (
+              <p key={item}>{item}</p>
+            ))}
           </div>
         </section>
 
         <section id="services" className="section">
           <div className="container">
-            <h2>Core Services</h2>
+            <h2>{siteSettings.servicesTitle}</h2>
             <p className="section-intro">
-              End-to-end support built for legal teams that need speed, precision, and consistency.
+              {siteSettings.servicesIntro}
             </p>
             <div className="card-grid">
-              <article className="card">
-                <h3>Contract Review</h3>
-                <p>Review, summarize, and flag key obligations, liabilities, and negotiation points.</p>
-              </article>
-              <article className="card">
-                <h3>Legal Research</h3>
-                <p>Jurisdiction-focused legal research with concise briefs and citation support.</p>
-              </article>
-              <article className="card">
-                <h3>Document Review</h3>
-                <p>Large-scale review for due diligence, eDiscovery, and compliance-driven audits.</p>
-              </article>
-              <article className="card">
-                <h3>Compliance Support</h3>
-                <p>Policy checks, risk mapping, and periodic compliance review for regulated sectors.</p>
-              </article>
-              <article className="card">
-                <h3>Litigation Support</h3>
-                <p>Chronologies, evidence indexing, and draft-ready legal documentation support.</p>
-              </article>
+              {siteSettings.services.map((service) => (
+                <article className="card service-card" key={service.title}>
+                  <span className="service-badge">LPO Service</span>
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                </article>
+              ))}
+            </div>
+            <div className="services-cta-row">
+              <a href="#contact" className="btn btn-primary">
+                {siteSettings.servicesCtaPrimary}
+              </a>
+              <a href={whatsappUrl} className="btn btn-whatsapp" target="_blank" rel="noreferrer">
+                {siteSettings.servicesCtaSecondary}
+              </a>
             </div>
           </div>
         </section>
 
         <section id="industries" className="section section-alt">
           <div className="container">
-            <h2>Industries We Support</h2>
+            <h2>{siteSettings.industriesTitle}</h2>
             <div className="chip-row">
-              <span>Banking & Finance</span>
-              <span>Healthcare</span>
-              <span>Technology</span>
-              <span>Insurance</span>
-              <span>Real Estate</span>
-              <span>Manufacturing</span>
+              {siteSettings.industries.map((industry) => (
+                <span key={industry}>{industry}</span>
+              ))}
             </div>
           </div>
         </section>
@@ -161,20 +333,17 @@ export default function HomePage() {
         <section id="about" className="section">
           <div className="container split">
             <div>
-              <h2>About Us</h2>
+              <h2>{siteSettings.aboutTitle}</h2>
               <p>
-                LPO Legal Solutions is built around process excellence and legal rigor. We combine
-                experienced professionals, quality controls, and secure delivery practices to support
-                your legal function as an extension of your in-house team.
+                {siteSettings.aboutDescription}
               </p>
             </div>
             <div className="process">
-              <h3>Our Delivery Process</h3>
+              <h3>{siteSettings.processTitle}</h3>
               <ol>
-                <li>Scope and intake alignment</li>
-                <li>Team assignment and kickoff</li>
-                <li>Quality checkpoints and review</li>
-                <li>Delivery, feedback, and continuous optimization</li>
+                {siteSettings.processSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
               </ol>
             </div>
           </div>
@@ -182,42 +351,28 @@ export default function HomePage() {
 
         <section id="case-studies" className="section section-alt">
           <div className="container">
-            <h2>Case Studies</h2>
+            <h2>{siteSettings.caseStudiesTitle}</h2>
             <div className="card-grid two-col">
-              <article className="card">
-                <h3>Contract Turnaround Reduced by 40%</h3>
-                <p>
-                  A midsize law firm improved negotiation cycles by standardizing review workflows
-                  with our dedicated contracts team.
-                </p>
-              </article>
-              <article className="card">
-                <h3>Compliance Backlog Cleared in 6 Weeks</h3>
-                <p>
-                  A healthcare client resolved delayed policy audits through structured review,
-                  reporting, and escalations.
-                </p>
-              </article>
+              {siteSettings.caseStudies.map((caseStudy) => (
+                <article className="card" key={caseStudy.title}>
+                  <h3>{caseStudy.title}</h3>
+                  <p>{caseStudy.description}</p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
         <section id="faq" className="section">
           <div className="container">
-            <h2>Frequently Asked Questions</h2>
+            <h2>{siteSettings.faqTitle}</h2>
             <div className="faq-list">
-              <details>
-                <summary>How do you ensure confidentiality?</summary>
-                <p>We use secure systems, role-based access, and strict handling protocols.</p>
-              </details>
-              <details>
-                <summary>Can you support high-volume projects?</summary>
-                <p>Yes, we scale teams based on timelines, complexity, and quality targets.</p>
-              </details>
-              <details>
-                <summary>Do you provide dedicated teams?</summary>
-                <p>Yes, dedicated teams are available for ongoing legal operations support.</p>
-              </details>
+              {siteSettings.faqs.map((faq) => (
+                <details key={faq.question}>
+                  <summary>{faq.question}</summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
             </div>
           </div>
         </section>
@@ -225,8 +380,13 @@ export default function HomePage() {
         <section id="contact" className="section cta">
           <div className="container split">
             <div>
-              <h2>Ready to streamline legal delivery?</h2>
-              <p>Request a proposal and we will get back to you within one business day.</p>
+              <h2>{siteSettings.contactHeading}</h2>
+              <p>
+                {siteSettings.contactDescription}
+              </p>
+              <a href={whatsappUrl} className="btn btn-whatsapp" target="_blank" rel="noreferrer">
+                {siteSettings.contactWhatsappLabel}
+              </a>
             </div>
             <form className="contact-form" onSubmit={handleSubmit} noValidate>
               <label htmlFor="fullName">Full Name</label>
@@ -242,7 +402,7 @@ export default function HomePage() {
               <textarea id="message" name="message" rows={4} required></textarea>
 
               <button type="submit" className="btn btn-cta">
-                Request Proposal
+                {siteSettings.contactFormButtonText}
               </button>
               <p className={`form-message ${messageType}`} aria-live="polite">
                 {formMessage}
@@ -254,15 +414,26 @@ export default function HomePage() {
 
       <footer className="site-footer">
         <div className="container footer-wrap">
-          <p>&copy; 2026 LPO Legal Solutions. All rights reserved.</p>
+          <p>&copy; {siteSettings.footerCopyright}</p>
           <nav aria-label="Footer links">
-            <a href="#">Privacy Policy</a>
-            <a href="#">Terms of Service</a>
-            <a href="#contact">Contact Info</a>
-            <a href="#">LinkedIn</a>
+            {siteSettings.footerLinks.map((link) => (
+              <a key={`${link.label}-${link.href}`} href={link.href}>
+                {link.label}
+              </a>
+            ))}
           </nav>
         </div>
       </footer>
+
+      <a
+        href={whatsappUrl}
+        className="whatsapp-float"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Open WhatsApp enquiry"
+      >
+        {siteSettings.floatingWhatsappLabel}
+      </a>
     </>
   );
 }

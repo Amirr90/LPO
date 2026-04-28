@@ -160,7 +160,7 @@ const navGroups = [
   { id: "administration", label: "Administration" }
 ];
 
-function StringListEditor({ label, items, onChange, placeholder }) {
+function StringListEditor({ label, items, onChange, placeholder, error }) {
   const updateItem = (index, value) => {
     onChange(items.map((item, itemIndex) => (itemIndex === index ? value : item)));
   };
@@ -187,11 +187,12 @@ function StringListEditor({ label, items, onChange, placeholder }) {
       <button type="button" className="admin-small-btn" onClick={addItem}>
         Add Item
       </button>
+      {error ? <p className="form-message error">{error}</p> : null}
     </div>
   );
 }
 
-function ObjectListEditor({ label, items, onChange, fields, addLabel }) {
+function ObjectListEditor({ label, items, onChange, fields, addLabel, error }) {
   const updateItem = (index, field, value) => {
     onChange(items.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item)));
   };
@@ -247,6 +248,7 @@ function ObjectListEditor({ label, items, onChange, fields, addLabel }) {
       <button type="button" className="admin-small-btn" onClick={addItem}>
         {addLabel || "Add Item"}
       </button>
+      {error ? <p className="form-message error">{error}</p> : null}
     </div>
   );
 }
@@ -264,6 +266,7 @@ export default function AdminSettingsForm({ initialSettings }) {
   const [isSaving, setIsSaving] = useState(false);
   const [savingSection, setSavingSection] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [openGroups, setOpenGroups] = useState(() =>
     Object.fromEntries(navGroups.map((group) => [group.id, true]))
   );
@@ -281,12 +284,58 @@ export default function AdminSettingsForm({ initialSettings }) {
 
   const updateField = (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[key]) {
+        return prev;
+      }
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
   };
+
+  const parseFieldErrors = (message) => {
+    if (!message || typeof message !== "string") {
+      return {};
+    }
+
+    const requiredMatch = message.match(/^([a-zA-Z0-9_]+) is required\.$/);
+    if (requiredMatch) {
+      return { [requiredMatch[1]]: message };
+    }
+
+    if (message === "At least one service is required.") {
+      return { services: message };
+    }
+    if (message === "At least one FAQ is required.") {
+      return { faqs: message };
+    }
+    if (message === "At least one navigation item is required.") {
+      return { navItems: message };
+    }
+    if (message === "Hero heading must be 140 characters or less.") {
+      return { heroHeading: message };
+    }
+    if (message === "Hero subheading must be 280 characters or less.") {
+      return { heroSubheading: message };
+    }
+    if (message === "WhatsApp message must be 280 characters or less.") {
+      return { whatsappMessage: message };
+    }
+    if (message.startsWith("teamUsers") || message.startsWith("Each team user") || message.startsWith("Team user") || message === "Invalid team user role.") {
+      return { teamUsers: message };
+    }
+
+    return {};
+  };
+
+  const getFieldError = (key) => fieldErrors[key] || "";
 
   const persistSettings = async (sectionId) => {
     setStatus("");
     setStatusType("");
     setStatusSection("");
+    setFieldErrors({});
     setIsSaving(true);
     setSavingSection(sectionId);
 
@@ -299,18 +348,22 @@ export default function AdminSettingsForm({ initialSettings }) {
       const payload = await response.json();
 
       if (!response.ok) {
+        const nextFieldErrors = parseFieldErrors(payload?.error);
+        setFieldErrors(nextFieldErrors);
         setStatusType("error");
-        setStatus(payload?.error || "Unable to save settings.");
+        setStatus(Object.keys(nextFieldErrors).length > 0 ? "" : payload?.error || "Unable to save settings.");
         setStatusSection(sectionId);
         return;
       }
 
       setSettings(payload.settings);
+      setFieldErrors({});
       setStatusType("success");
       setStatus("Saved successfully.");
       setStatusSection(sectionId);
       router.refresh();
     } catch {
+      setFieldErrors({});
       setStatusType("error");
       setStatus("Save failed. Please try again.");
       setStatusSection(sectionId);
@@ -416,6 +469,7 @@ export default function AdminSettingsForm({ initialSettings }) {
               <>
                 <label htmlFor="brandName">Brand Name</label>
                 <input id="brandName" type="text" value={settings.brandName} onChange={(event) => updateField("brandName", event.target.value)} required />
+                {getFieldError("brandName") ? <p className="form-message error">{getFieldError("brandName")}</p> : null}
               </>
             )}
 
@@ -424,6 +478,7 @@ export default function AdminSettingsForm({ initialSettings }) {
                 label="Navigation Items"
                 items={settings.navItems}
                 onChange={(items) => updateField("navItems", items)}
+                error={getFieldError("navItems")}
                 fields={[
                   { key: "label", label: "Label" },
                   { key: "href", label: "Href (example: #services)" }
@@ -438,8 +493,10 @@ export default function AdminSettingsForm({ initialSettings }) {
                 <input id="heroEyebrow" type="text" value={settings.heroEyebrow} onChange={(event) => updateField("heroEyebrow", event.target.value)} required />
                 <label htmlFor="heroHeading">Hero Heading</label>
                 <input id="heroHeading" type="text" maxLength={140} value={settings.heroHeading} onChange={(event) => updateField("heroHeading", event.target.value)} required />
+                {getFieldError("heroHeading") ? <p className="form-message error">{getFieldError("heroHeading")}</p> : null}
                 <label htmlFor="heroSubheading">Hero Subheading</label>
                 <textarea id="heroSubheading" rows={4} value={settings.heroSubheading} onChange={(event) => updateField("heroSubheading", event.target.value)} required />
+                {getFieldError("heroSubheading") ? <p className="form-message error">{getFieldError("heroSubheading")}</p> : null}
                 <label htmlFor="heroSupportText">Hero Support Text</label>
                 <textarea id="heroSupportText" rows={3} value={settings.heroSupportText} onChange={(event) => updateField("heroSupportText", event.target.value)} required />
                 <label htmlFor="heroCtaPrimary">Primary CTA Label</label>
@@ -472,6 +529,7 @@ export default function AdminSettingsForm({ initialSettings }) {
                     { key: "title", label: "Service Title" },
                     { key: "description", label: "Service Description", type: "textarea", rows: 3 }
                   ]}
+                  error={getFieldError("services")}
                   addLabel="Add Service"
                 />
                 <label htmlFor="servicesCtaPrimary">Services CTA Primary Label</label>
@@ -530,6 +588,7 @@ export default function AdminSettingsForm({ initialSettings }) {
                     { key: "question", label: "Question" },
                     { key: "answer", label: "Answer", type: "textarea", rows: 3 }
                   ]}
+                  error={getFieldError("faqs")}
                   addLabel="Add FAQ"
                 />
               </>
@@ -541,6 +600,7 @@ export default function AdminSettingsForm({ initialSettings }) {
                 <input id="whatsappNumber" type="text" value={settings.whatsappNumber} onChange={(event) => updateField("whatsappNumber", event.target.value)} required />
                 <label htmlFor="whatsappMessage">WhatsApp Default Message</label>
                 <textarea id="whatsappMessage" rows={3} value={settings.whatsappMessage} onChange={(event) => updateField("whatsappMessage", event.target.value)} required />
+                {getFieldError("whatsappMessage") ? <p className="form-message error">{getFieldError("whatsappMessage")}</p> : null}
                 <label htmlFor="floatingWhatsappLabel">Floating WhatsApp Label</label>
                 <input id="floatingWhatsappLabel" type="text" value={settings.floatingWhatsappLabel} onChange={(event) => updateField("floatingWhatsappLabel", event.target.value)} />
               </>
@@ -604,6 +664,7 @@ export default function AdminSettingsForm({ initialSettings }) {
                       ]
                     }
                   ]}
+                  error={getFieldError("teamUsers")}
                   addLabel="Add User"
                 />
               </>

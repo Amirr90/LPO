@@ -4,6 +4,7 @@ import { ADMIN_SESSION_COOKIE, verifyAdminSessionToken } from "@/lib/adminAuth";
 import { getSiteSettings, updateSiteSettings } from "@/lib/settingsStore";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 const ALLOWED_TEAM_ROLES = new Set([
   "admin",
   "content_manager",
@@ -92,7 +93,10 @@ export async function GET() {
   try {
     const settings = await getSiteSettings();
     const { teamUsers: _teamUsers, ...publicSettings } = settings;
-    return NextResponse.json({ settings: publicSettings });
+    return NextResponse.json(
+      { settings: publicSettings },
+      { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } }
+    );
   } catch {
     return NextResponse.json({ error: "Failed to fetch settings." }, { status: 500 });
   }
@@ -113,6 +117,12 @@ export async function PUT(request) {
     const settings = await updateSiteSettings(payload);
     return NextResponse.json({ settings });
   } catch {
-    return NextResponse.json({ error: "Failed to save settings." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error:
+          "Failed to save settings. Persistent storage is unavailable in production runtime. Configure a managed database."
+      },
+      { status: 500 }
+    );
   }
 }

@@ -131,7 +131,10 @@ export default function HomePage() {
 
     const loadSettings = async () => {
       try {
-        const response = await fetch("/api/admin/settings");
+        const response = await fetch(`/api/admin/settings?t=${Date.now()}`, {
+          cache: "no-store",
+          headers: { "Cache-Control": "no-cache" }
+        });
         if (!response.ok) {
           return;
         }

@@ -267,6 +267,8 @@ export default function AdminSettingsForm({ initialSettings }) {
   const [savingSection, setSavingSection] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
+  const [isCheckingStorage, setIsCheckingStorage] = useState(false);
+  const [storageStatus, setStorageStatus] = useState("");
   const [openGroups, setOpenGroups] = useState(() =>
     Object.fromEntries(navGroups.map((group) => [group.id, true]))
   );
@@ -399,6 +401,24 @@ export default function AdminSettingsForm({ initialSettings }) {
     }
   };
 
+  const handleCheckStorage = async () => {
+    setIsCheckingStorage(true);
+    setStorageStatus("");
+    try {
+      const response = await fetch("/api/admin/storage-health", { cache: "no-store" });
+      const payload = await response.json();
+      if (!response.ok || !payload?.ok) {
+        setStorageStatus("Storage unavailable in current production runtime.");
+        return;
+      }
+      setStorageStatus(`Storage connected: ${payload.backend}`);
+    } catch {
+      setStorageStatus("Storage check failed. Please try again.");
+    } finally {
+      setIsCheckingStorage(false);
+    }
+  };
+
   return (
     <div className="admin-page">
       <section className="admin-console">
@@ -455,6 +475,14 @@ export default function AdminSettingsForm({ initialSettings }) {
             <div className="admin-main-header-actions">
               <button
                 type="button"
+                className="btn btn-secondary"
+                onClick={handleCheckStorage}
+                disabled={isCheckingStorage}
+              >
+                {isCheckingStorage ? "Checking..." : "Check storage"}
+              </button>
+              <button
+                type="button"
                 className="btn btn-primary"
                 onClick={() => handleSaveSection(activeSection)}
                 disabled={isSaving}
@@ -463,6 +491,7 @@ export default function AdminSettingsForm({ initialSettings }) {
               </button>
             </div>
           </div>
+          {storageStatus ? <p className="admin-help-text">{storageStatus}</p> : null}
 
           <div className="admin-section-panel">
             {activeSection === "general" && (

@@ -4,125 +4,125 @@ import { useEffect, useState } from "react";
 import Script from "next/script";
 
 const calendlyUrl = "https://calendly.com/aamirr-1232/30min";
+const DEFAULT_SITE_SETTINGS = {
+  brandName: "LPO Legal Solutions",
+  navItems: [
+    { href: "#home", label: "Home" },
+    { href: "#services", label: "Services" },
+    { href: "#industries", label: "Industries" },
+    { href: "#about", label: "About Us" },
+    { href: "#case-studies", label: "Case Studies" },
+    { href: "#faq", label: "FAQ" },
+    { href: "#contact", label: "Contact" }
+  ],
+  heroEyebrow: "Trusted LPO Partner",
+  heroHeading: "Scale legal operations with secure, high-quality outsourcing.",
+  heroSubheading:
+    "We help law firms and legal departments reduce turnaround time, improve delivery quality, and control costs with dedicated legal support teams.",
+  heroSupportText: "Free consultation, no obligation, and secure communication tailored for law firms.",
+  heroCtaPrimary: "Book Free Consultation",
+  heroCtaSecondary: "Get a Quote",
+  heroQuickPoints: ["Free 30-min consultation", "No obligation"],
+  heroTrustPoints: [
+    "Trusted by legal teams in US & UK",
+    "Confidential & secure communication",
+    "Get a response within 24 hours"
+  ],
+  heroCardTitle: "Why teams choose us",
+  heroCardItems: [
+    "24-48 hour delivery options",
+    "Strict confidentiality standards",
+    "Skilled legal and compliance professionals",
+    "Transparent pricing and predictable outcomes"
+  ],
+  trustItems: [
+    "Confidential workflows",
+    "Domain-trained legal teams",
+    "US-focused legal standards",
+    "Dedicated delivery manager"
+  ],
+  servicesTitle: "Expanded LPO Services",
+  servicesIntro:
+    "End-to-end legal operations support designed for speed, compliance, and measurable outcomes.",
+  services: [
+    {
+      title: "Contract Drafting and Review",
+      description: "Draft, review, and redline agreements to reduce negotiation cycles and legal risk."
+    },
+    {
+      title: "Legal Research and Memo Support",
+      description: "Jurisdiction-specific research with concise memo outputs for faster legal decisions."
+    },
+    {
+      title: "eDiscovery and Document Review",
+      description: "Scalable review support for litigation, diligence, and internal investigations."
+    }
+  ],
+  servicesCtaPrimary: "Request Service Proposal",
+  servicesCtaSecondary: "Ask on WhatsApp",
+  industriesTitle: "Industries We Support",
+  industries: ["Banking & Finance", "Healthcare", "Technology", "Insurance", "Real Estate", "Manufacturing"],
+  aboutTitle: "About Us",
+  aboutDescription:
+    "LPO Legal Solutions is built around process excellence and legal rigor. We combine experienced professionals, quality controls, and secure delivery practices to support your legal function as an extension of your in-house team.",
+  processTitle: "Our Delivery Process",
+  processSteps: [
+    "Scope and intake alignment",
+    "Team assignment and kickoff",
+    "Quality checkpoints and review",
+    "Delivery, feedback, and continuous optimization"
+  ],
+  caseStudiesTitle: "Case Studies",
+  caseStudies: [
+    {
+      title: "Contract Turnaround Reduced by 40%",
+      description:
+        "A midsize law firm improved negotiation cycles by standardizing review workflows with our dedicated contracts team."
+    },
+    {
+      title: "Compliance Backlog Cleared in 6 Weeks",
+      description:
+        "A healthcare client resolved delayed policy audits through structured review, reporting, and escalations."
+    }
+  ],
+  faqTitle: "Frequently Asked Questions",
+  faqs: [
+    {
+      question: "How do you ensure confidentiality?",
+      answer: "We use secure systems, role-based access, and strict handling protocols."
+    },
+    {
+      question: "Can you support high-volume projects?",
+      answer: "Yes, we scale teams based on timelines, complexity, and quality targets."
+    },
+    {
+      question: "Do you provide dedicated teams?",
+      answer: "Yes, dedicated teams are available for ongoing legal operations support."
+    }
+  ],
+  whatsappNumber: "0000000000",
+  whatsappMessage: "Hello, I am interested in LPO services. Please share details and pricing.",
+  contactWhatsappLabel: "Chat on WhatsApp",
+  contactHeading: "Ready to streamline legal delivery?",
+  contactDescription:
+    "Request a proposal and we will get back to you within one business day. For urgent requirements, use WhatsApp for faster response.",
+  contactFormButtonText: "Request Proposal",
+  footerLinks: [
+    { label: "Privacy Policy", href: "#" },
+    { label: "Terms of Service", href: "#" },
+    { label: "Contact Info", href: "#contact" },
+    { label: "LinkedIn", href: "#" }
+  ],
+  floatingWhatsappLabel: "WhatsApp",
+  footerCopyright: "2026 LPO Legal Solutions. All rights reserved."
+};
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [formMessage, setFormMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const [siteSettings, setSiteSettings] = useState({
-    brandName: "LPO Legal Solutions",
-    navItems: [
-      { href: "#home", label: "Home" },
-      { href: "#services", label: "Services" },
-      { href: "#industries", label: "Industries" },
-      { href: "#about", label: "About Us" },
-      { href: "#case-studies", label: "Case Studies" },
-      { href: "#faq", label: "FAQ" },
-      { href: "#contact", label: "Contact" }
-    ],
-    heroEyebrow: "Trusted LPO Partner",
-    heroHeading: "Scale legal operations with secure, high-quality outsourcing.",
-    heroSubheading:
-      "We help law firms and legal departments reduce turnaround time, improve delivery quality, and control costs with dedicated legal support teams.",
-    heroSupportText: "Free consultation, no obligation, and secure communication tailored for law firms.",
-    heroCtaPrimary: "Book Free Consultation",
-    heroCtaSecondary: "Get a Quote",
-    heroQuickPoints: ["Free 30-min consultation", "No obligation"],
-    heroTrustPoints: [
-      "Trusted by legal teams in US & UK",
-      "Confidential & secure communication",
-      "Get a response within 24 hours"
-    ],
-    heroCardTitle: "Why teams choose us",
-    heroCardItems: [
-      "24-48 hour delivery options",
-      "Strict confidentiality standards",
-      "Skilled legal and compliance professionals",
-      "Transparent pricing and predictable outcomes"
-    ],
-    trustItems: [
-      "Confidential workflows",
-      "Domain-trained legal teams",
-      "US-focused legal standards",
-      "Dedicated delivery manager"
-    ],
-    servicesTitle: "Expanded LPO Services",
-    servicesIntro:
-      "End-to-end legal operations support designed for speed, compliance, and measurable outcomes.",
-    services: [
-      {
-        title: "Contract Drafting and Review",
-        description: "Draft, review, and redline agreements to reduce negotiation cycles and legal risk."
-      },
-      {
-        title: "Legal Research and Memo Support",
-        description: "Jurisdiction-specific research with concise memo outputs for faster legal decisions."
-      },
-      {
-        title: "eDiscovery and Document Review",
-        description: "Scalable review support for litigation, diligence, and internal investigations."
-      }
-    ],
-    servicesCtaPrimary: "Request Service Proposal",
-    servicesCtaSecondary: "Ask on WhatsApp",
-    industriesTitle: "Industries We Support",
-    industries: ["Banking & Finance", "Healthcare", "Technology", "Insurance", "Real Estate", "Manufacturing"],
-    aboutTitle: "About Us",
-    aboutDescription:
-      "LPO Legal Solutions is built around process excellence and legal rigor. We combine experienced professionals, quality controls, and secure delivery practices to support your legal function as an extension of your in-house team.",
-    processTitle: "Our Delivery Process",
-    processSteps: [
-      "Scope and intake alignment",
-      "Team assignment and kickoff",
-      "Quality checkpoints and review",
-      "Delivery, feedback, and continuous optimization"
-    ],
-    caseStudiesTitle: "Case Studies",
-    caseStudies: [
-      {
-        title: "Contract Turnaround Reduced by 40%",
-        description:
-          "A midsize law firm improved negotiation cycles by standardizing review workflows with our dedicated contracts team."
-      },
-      {
-        title: "Compliance Backlog Cleared in 6 Weeks",
-        description:
-          "A healthcare client resolved delayed policy audits through structured review, reporting, and escalations."
-      }
-    ],
-    faqTitle: "Frequently Asked Questions",
-    faqs: [
-      {
-        question: "How do you ensure confidentiality?",
-        answer: "We use secure systems, role-based access, and strict handling protocols."
-      },
-      {
-        question: "Can you support high-volume projects?",
-        answer: "Yes, we scale teams based on timelines, complexity, and quality targets."
-      },
-      {
-        question: "Do you provide dedicated teams?",
-        answer: "Yes, dedicated teams are available for ongoing legal operations support."
-      }
-    ],
-    whatsappNumber: "0000000000",
-    whatsappMessage: "Hello, I am interested in LPO services. Please share details and pricing.",
-    contactWhatsappLabel: "Chat on WhatsApp",
-    contactHeading: "Ready to streamline legal delivery?",
-    contactDescription:
-      "Request a proposal and we will get back to you within one business day. For urgent requirements, use WhatsApp for faster response.",
-    contactFormButtonText: "Request Proposal",
-    footerLinks: [
-      { label: "Privacy Policy", href: "#" },
-      { label: "Terms of Service", href: "#" },
-      { label: "Contact Info", href: "#contact" },
-      { label: "LinkedIn", href: "#" }
-    ],
-    floatingWhatsappLabel: "WhatsApp",
-    footerCopyright: "2026 LPO Legal Solutions. All rights reserved."
-  });
-  const whatsappUrl = `https://wa.me/${siteSettings.whatsappNumber}?text=${encodeURIComponent(siteSettings.whatsappMessage)}`;
+  const [siteSettings, setSiteSettings] = useState(null);
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -144,7 +144,9 @@ export default function HomePage() {
           setSiteSettings(payload.settings);
         }
       } catch {
-        // Keep default hero text if settings API is unavailable.
+        if (mounted) {
+          setSiteSettings(DEFAULT_SITE_SETTINGS);
+        }
       }
     };
 
@@ -171,6 +173,12 @@ export default function HomePage() {
       mounted = false;
     };
   }, []);
+
+  if (!siteSettings) {
+    return null;
+  }
+
+  const whatsappUrl = `https://wa.me/${siteSettings.whatsappNumber}?text=${encodeURIComponent(siteSettings.whatsappMessage)}`;
 
   const handleSubmit = (event) => {
     event.preventDefault();
